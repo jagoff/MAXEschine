@@ -358,3 +358,4 @@ Ask the AxeSystem for this object. Use it to control and read the looper.
 		void once();
 		void reverse(); 
 		void halfSpeed();
+# MAXEschine
