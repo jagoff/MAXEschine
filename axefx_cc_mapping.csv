@@ -1,0 +1,23 @@
+Function,CC#,Location,Description
+Scene Select,35,Setup > MIDI/Remote > Scene Select,Controls scene changes (Pads 1-4)
+External Controller 1,16,Setup > MIDI/Remote > External Controllers,Potentiometer control (Button 1 active)
+External Controller 2,17,Setup > MIDI/Remote > External Controllers,Potentiometer control (Button 2 active)
+External Controller 3,18,Setup > MIDI/Remote > External Controllers,Potentiometer control (Button 3 active)
+External Controller 4,19,Setup > MIDI/Remote > External Controllers,Potentiometer control (Button 4 active)
+External Controller 5,20,Setup > MIDI/Remote > External Controllers,Potentiometer control (Button 5 active)
+External Controller 6,21,Setup > MIDI/Remote > External Controllers,Potentiometer control (Button 6 active)
+External Controller 7,22,Setup > MIDI/Remote > External Controllers,Potentiometer control (Button 7 active)
+External Controller 8,23,Setup > MIDI/Remote > External Controllers,Potentiometer control (Button 8 active)
+COMP1 Bypass,21,Setup > MIDI/Remote > COMP1 > Bypass CC,Pad 1 effect bypass toggle
+DISTORT1 Bypass,33,Setup > MIDI/Remote > DISTORT1 > Bypass CC,Pad 2 effect bypass toggle
+DELAY1 Bypass,45,Setup > MIDI/Remote > DELAY1 > Bypass CC,Pad 3 effect bypass toggle
+REVERB1 Bypass,41,Setup > MIDI/Remote > REVERB1 > Bypass CC,Pad 4 effect bypass toggle
+CHORUS1 Bypass,53,Setup > MIDI/Remote > CHORUS1 > Bypass CC,Pad 5 effect bypass toggle
+FLANGER1 Bypass,57,Setup > MIDI/Remote > FLANGER1 > Bypass CC,Pad 6 effect bypass toggle
+PHASER1 Bypass,65,Setup > MIDI/Remote > PHASER1 > Bypass CC,Pad 7 effect bypass toggle
+WAH1 Bypass,69,Setup > MIDI/Remote > WAH1 > Bypass CC,Pad 8 effect bypass toggle
+VOLUME1 Bypass,77,Setup > MIDI/Remote > VOLUME1 > Bypass CC,Pad 9 effect bypass toggle
+TREMOLO1 Bypass,81,Setup > MIDI/Remote > TREMOLO1 > Bypass CC,Pad 10 effect bypass toggle
+PITCH1 Bypass,85,Setup > MIDI/Remote > PITCH1 > Bypass CC,Pad 11 effect bypass toggle
+FILTER1 Bypass,89,Setup > MIDI/Remote > FILTER1 > Bypass CC,Pad 12 effect bypass toggle
+Main Volume,11,Setup > MIDI/Remote > Output 1 Volume,Optional main volume control

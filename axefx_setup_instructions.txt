@@ -1,0 +1,214 @@
+🎸 CONFIGURACIÓN AXE-FX III PARA MASCHINE MIKRO
+============================================================
+
+📋 INSTRUCCIONES PASO A PASO PARA CONFIGURAR TU AXE-FX III
+============================================================
+
+IMPORTANTE: Sigue estos pasos EXACTAMENTE en el orden indicado para que el Maschine funcione perfectamente.
+
+1️⃣ CONFIGURAR SCENE SELECT
+----------------------------------------
+📍 Ubicación: Setup > MIDI/Remote > Scene Select
+🔧 Configuración:
+   • CC = 35
+   • Esto permite que los Pads 1-4 del Maschine cambien de escena
+
+2️⃣ CONFIGURAR EXTERNAL CONTROLLERS
+----------------------------------------
+📍 Ubicación: Setup > MIDI/Remote > External Controllers
+🔧 Configuración para cada External Controller:
+
+   External Controller 1: CC = 16
+   External Controller 2: CC = 17
+   External Controller 3: CC = 18
+   External Controller 4: CC = 19
+   External Controller 5: CC = 20
+   External Controller 6: CC = 21
+   External Controller 7: CC = 22
+   External Controller 8: CC = 23
+
+   💡 Esto permite que el potenciómetro del Maschine controle diferentes parámetros
+   💡 Los botones laterales seleccionan qué External Controller está activo
+
+3️⃣ CONFIGURAR EFECTOS PARA BYPASS
+----------------------------------------
+📍 Ubicación: Setup > MIDI/Remote > Buscar cada efecto en la lista
+🔧 Para cada efecto, configura EXACTAMENTE:
+
+   🎯 COMP1 (Pad 1):
+      • Bypass CC = 21
+      • Bypass Mode = Mute FX In
+      • Bypass Value = 127
+
+   🎯 DISTORT1 (Pad 2):
+      • Bypass CC = 33
+      • Bypass Mode = Mute FX In
+      • Bypass Value = 127
+
+   🎯 DELAY1 (Pad 3):
+      • Bypass CC = 45
+      • Bypass Mode = Mute FX In
+      • Bypass Value = 127
+
+   🎯 REVERB1 (Pad 4):
+      • Bypass CC = 41
+      • Bypass Mode = Mute FX In
+      • Bypass Value = 127
+
+   🎯 CHORUS1 (Pad 5):
+      • Bypass CC = 53
+      • Bypass Mode = Mute FX In
+      • Bypass Value = 127
+
+   🎯 FLANGER1 (Pad 6):
+      • Bypass CC = 57
+      • Bypass Mode = Mute FX In
+      • Bypass Value = 127
+
+   🎯 PHASER1 (Pad 7):
+      • Bypass CC = 65
+      • Bypass Mode = Mute FX In
+      • Bypass Value = 127
+
+   🎯 WAH1 (Pad 8):
+      • Bypass CC = 69
+      • Bypass Mode = Mute FX In
+      • Bypass Value = 127
+
+   🎯 VOLUME1 (Pad 9):
+      • Bypass CC = 77
+      • Bypass Mode = Mute FX In
+      • Bypass Value = 127
+
+   🎯 TREMOLO1 (Pad 10):
+      • Bypass CC = 81
+      • Bypass Mode = Mute FX In
+      • Bypass Value = 127
+
+   🎯 PITCH1 (Pad 11):
+      • Bypass CC = 85
+      • Bypass Mode = Mute FX In
+      • Bypass Value = 127
+
+   🎯 FILTER1 (Pad 12):
+      • Bypass CC = 89
+      • Bypass Mode = Mute FX In
+      • Bypass Value = 127
+
+4️⃣ CONFIGURACIÓN ADICIONAL (OPCIONAL)
+----------------------------------------
+📍 Main Volume:
+   • Ubicación: Setup > MIDI/Remote > Output 1 Volume
+   • Configura: CC = 11
+
+5️⃣ VERIFICACIÓN
+----------------------------------------
+✅ Después de configurar todo, verifica que:
+
+   • Los Pads 1-4 del Maschine cambien de escena (CC#35)
+   • Los Pads 5-16 hagan bypass toggle de efectos
+   • El potenciómetro controle el External Controller activo
+   • Los botones laterales seleccionen qué External Controller usar
+
+📋 REFERENCIA RÁPIDA
+============================================================
+
+🎵 ESCENAS (Pads 1-4):
+   Setup > MIDI/Remote > Scene Select > CC = 35
+
+🎚️  EXTERNAL CONTROLLERS (Potenciómetro):
+   Setup > MIDI/Remote > External Controller 1 > CC = 16
+   Setup > MIDI/Remote > External Controller 2 > CC = 17
+   Setup > MIDI/Remote > External Controller 3 > CC = 18
+   Setup > MIDI/Remote > External Controller 4 > CC = 19
+   Setup > MIDI/Remote > External Controller 5 > CC = 20
+   Setup > MIDI/Remote > External Controller 6 > CC = 21
+   Setup > MIDI/Remote > External Controller 7 > CC = 22
+   Setup > MIDI/Remote > External Controller 8 > CC = 23
+
+🎯 EFECTOS BYPASS (Pads 5-16):
+   Setup > MIDI/Remote > GEQ1 > Bypass CC = 18
+   Setup > MIDI/Remote > REVERB1 > Bypass CC = 41
+   Setup > MIDI/Remote > DELAY1 > Bypass CC = 45
+   Setup > MIDI/Remote > AMP1 > Bypass CC = 11
+   Setup > MIDI/Remote > AMP2 > Bypass CC = 12
+   Setup > MIDI/Remote > DRIVE1 > Bypass CC = 13
+   Setup > MIDI/Remote > DRIVE2 > Bypass CC = 14
+   Setup > MIDI/Remote > CAB1 > Bypass CC = 15
+   Setup > MIDI/Remote > CAB2 > Bypass CC = 16
+   Setup > MIDI/Remote > GATE1 > Bypass CC = 17
+   Setup > MIDI/Remote > PITCH1 > Bypass CC = 85
+
+💡 CONFIGURACIÓN RÁPIDA:
+   • Bypass Mode = Mute FX In
+   • Bypass Value = 127
+   • Todos los CC# están en el rango estándar del Axe-Fx III
+
+🎯 MAPEO COMPLETO DEL MASCHINE MIKRO
+============================================================
+
+🎵 PADS 1-4 (ESCENAS):
+   Pad 1 → Escena 1 (CC#35 = 0)
+   Pad 2 → Escena 2 (CC#35 = 1)
+   Pad 3 → Escena 3 (CC#35 = 2)
+   Pad 4 → Escena 4 (CC#35 = 3)
+
+🎯 PADS 5-16 (EFECTOS BYPASS):
+   Pad  5 → GEQ1 (CC#18)
+   Pad  6 → REVERB1 (CC#41)
+   Pad  7 → DELAY1 (CC#45)
+   Pad  8 → NO MAPEADO (necesita configuración)
+   Pad  9 → AMP1 (CC#11)
+   Pad 10 → AMP2 (CC#12)
+   Pad 11 → DRIVE1 (CC#13)
+   Pad 12 → DRIVE2 (CC#14)
+   Pad 13 → CAB1 (CC#15)
+   Pad 14 → CAB2 (CC#16)
+   Pad 15 → GATE1 (CC#17)
+   Pad 16 → PITCH1 (CC#85)
+
+🎚️  POTENCIÓMETRO:
+   Controla el External Controller activo
+   El External Controller activo se selecciona con botones laterales
+
+🎛️  BOTONES LATERALES:
+   Botón 1 (CC#112) → External Controller 1
+   Botón 2 (CC#113) → External Controller 2
+   Botón 3 (CC#114) → External Controller 3
+   Botón 4 (CC#115) → External Controller 4
+   Botón 5 (CC#116) → External Controller 5
+   Botón 6 (CC#117) → External Controller 6
+   Botón 7 (CC#118) → External Controller 7
+   Botón 8 (CC#119) → External Controller 8
+
+🔧 CONFIGURACIÓN DE PRESET
+============================================================
+
+IMPORTANTE: Después de configurar todos los CC#, guarda tu preset:
+
+1. Presiona STORE en tu Axe-Fx III
+2. Selecciona el preset actual
+3. Presiona ENTER para confirmar
+4. Esto guardará toda la configuración MIDI
+
+💡 CONSEJOS ADICIONALES
+============================================================
+
+• Todos los CC# utilizados están en el rango estándar del Axe-Fx III
+• La configuración es compatible con cualquier preset
+• Los efectos se pueden reorganizar en tu preset sin cambiar la configuración MIDI
+• Si un efecto no existe en tu preset, simplemente no responderá al pad correspondiente
+• El potenciómetro solo funciona cuando hay un External Controller activo
+• Los botones laterales funcionan como selección única (solo uno activo a la vez)
+
+✅ DESPUÉS DE CONFIGURAR TODO
+============================================================
+
+1. Guarda tu preset
+2. Ejecuta el script maschine_to_axefx.py
+3. Prueba cada pad del Maschine
+4. Verifica que las escenas cambien correctamente
+5. Verifica que los efectos hagan bypass toggle
+6. Prueba el potenciómetro con diferentes External Controllers
+
+🎵 ¡TU MASCHINE MIKRO ESTARÁ COMPLETAMENTE FUNCIONAL CON EL AXE-FX III!

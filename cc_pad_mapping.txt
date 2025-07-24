@@ -1,0 +1,60 @@
+🎵 MAPEO EXACTO: PAD → CC# → CONFIGURACIÓN EN AXE-FX III
+========================================================
+
+🎵 ESCENAS (Pads 1-4):
+Pad 1 (nota 36) → CC#35 → Scene Select
+Pad 2 (nota 37) → CC#35 → Scene Select  
+Pad 3 (nota 38) → CC#35 → Scene Select
+Pad 4 (nota 39) → CC#35 → Scene Select
+
+🎯 EFECTOS (Pads 5-16) - CC CONSECUTIVOS:
+Pad 5  (nota 24) → CC#18 → GEQ1 (Bypass)
+Pad 6  (nota 25) → CC#19 → REVERB1 (Bypass)
+Pad 7  (nota 26) → CC#20 → DELAY1 (Bypass)
+Pad 8  (nota 27) → CC#21 → COMP1 (Bypass)
+Pad 9  (nota 28) → CC#22 → AMP1 (Bypass)
+Pad 10 (nota 29) → CC#23 → AMP2 (Bypass)
+Pad 11 (nota 30) → CC#24 → DRIVE1 (Bypass)
+Pad 12 (nota 31) → CC#25 → DRIVE2 (Bypass)
+Pad 13 (nota 32) → CC#26 → CAB1 (Bypass)
+Pad 14 (nota 33) → CC#27 → CAB2 (Bypass)
+Pad 15 (nota 34) → CC#28 → GATE1 (Bypass)
+Pad 16 (nota 35) → CC#29 → PITCH1 (Bypass)
+
+🎚️  POTENCIÓMETRO:
+Potenciómetro → CC#16-23 → External Controller 1-8 (según botón activo)
+
+🎛️  BOTONES LATERALES:
+Botón 1 (CC#112) → External Controller 1 activo
+Botón 2 (CC#113) → External Controller 2 activo
+Botón 3 (CC#114) → External Controller 3 activo
+Botón 4 (CC#115) → External Controller 4 activo
+Botón 5 (CC#116) → External Controller 5 activo
+Botón 6 (CC#117) → External Controller 6 activo
+Botón 7 (CC#118) → External Controller 7 activo
+Botón 8 (CC#119) → External Controller 8 activo
+
+🔧 CONFIGURACIÓN EN AXE-FX III:
+Setup > MIDI/Remote > Buscar en lista de CC#:
+
+• Scene Select → CC#35
+• GEQ1 → Bypass CC = 18
+• REVERB1 → Bypass CC = 19
+• DELAY1 → Bypass CC = 20
+• COMP1 → Bypass CC = 21
+• AMP1 → Bypass CC = 22
+• AMP2 → Bypass CC = 23
+• DRIVE1 → Bypass CC = 24
+• DRIVE2 → Bypass CC = 25
+• CAB1 → Bypass CC = 26
+• CAB2 → Bypass CC = 27
+• GATE1 → Bypass CC = 28
+• PITCH1 → Bypass CC = 29
+• External Controller 1 → CC = 16
+• External Controller 2 → CC = 17
+• External Controller 3 → CC = 18
+• External Controller 4 → CC = 19
+• External Controller 5 → CC = 20
+• External Controller 6 → CC = 21
+• External Controller 7 → CC = 22
+• External Controller 8 → CC = 23 
