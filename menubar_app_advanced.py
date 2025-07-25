@@ -15,8 +15,12 @@ import json
 from pathlib import Path
 
 # Ocultar la app del dock (solo menú de barra)
-if hasattr(rumps.App, 'set_activation_policy'):
-    rumps.App.set_activation_policy('accessory')
+try:
+    import AppKit
+    AppKit.NSApplication.sharedApplication()
+    AppKit.NSApplication.sharedApplication().setActivationPolicy_(AppKit.NSApplicationActivationPolicyAccessory)
+except ImportError:
+    pass
 
 # Importar configuración
 try:
