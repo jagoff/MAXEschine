@@ -14,6 +14,10 @@ import signal
 import json
 from pathlib import Path
 
+# Ocultar la app del dock (solo menú de barra)
+if hasattr(rumps.App, 'set_activation_policy'):
+    rumps.App.set_activation_policy('accessory')
+
 # Importar configuración
 try:
     from config import MASCHINE_MIDI_NAME, MASCHINE_OUTPUT_NAME, AXEFX_MIDI_NAME
