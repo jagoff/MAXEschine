@@ -285,6 +285,10 @@ class MAXEschineApp(rumps.App):
         
         # La actualización visual del menú se hace en update_menu_display()
     
+    def auto_update(self, _=None):
+        """Actualización automática del estado"""
+        self.update_device_status()
+
     def update_guitar_icon(self):
         """Actualiza el título dinámico con códigos de colores"""
         if not self.device_info:
