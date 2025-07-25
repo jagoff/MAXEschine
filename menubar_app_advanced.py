@@ -288,21 +288,17 @@ class MAXEschineApp(rumps.App):
     def update_guitar_icon(self):
         """Actualiza el título dinámico con códigos de colores"""
         if not self.device_info:
+            # Modo espera/idle cuando no hay información de dispositivos
+            self.title = "⏳ MAXEschine"
             return
 
         maschine_ok = self.device_info.get('maschine_detected', False)
         axefx_ok = self.device_info.get('axefx_detected', False)
-        
-        # Verificar si el control está realmente funcionando
-        control_ok = self.is_running and self.control_process and self.control_process.poll() is None
 
-        # Sistema de códigos de colores
-        if maschine_ok and axefx_ok and control_ok:
-            # Verde: Ambos dispositivos conectados y control activo
+        # Sistema de códigos de colores simplificado
+        if maschine_ok and axefx_ok:
+            # Verde: Ambos dispositivos conectados
             self.title = "🟢 MAXEschine"
-        elif maschine_ok and axefx_ok:
-            # Amarillo: Ambos dispositivos conectados pero control inactivo
-            self.title = "🟡 MAXEschine"
         elif maschine_ok or axefx_ok:
             # Amarillo: Solo un dispositivo conectado
             self.title = "🟡 MAXEschine"
@@ -317,28 +313,20 @@ class MAXEschineApp(rumps.App):
     def update_menu_display(self, _=None):
         """Actualiza la visualización del menú en tiempo real"""
         if not self.device_info:
+            # Modo espera/idle
+            self.maschine_status.title = "Maschine Mikro ⏳"
+            self.axefx_status.title = "Axe-Fx ⏳"
             return
         
-        # Actualizar estado de Maschine Mikro
+        # Actualizar estado de Maschine Mikro - solo verde o rojo
         maschine_ok = self.device_info.get('maschine_detected', False)
         maschine_status = "🟢" if maschine_ok else "🔴"
         self.maschine_status.title = f"Maschine Mikro {maschine_status}"
         
-        # Actualizar estado de Axe-Fx
+        # Actualizar estado de Axe-Fx - solo verde o rojo
         axefx_ok = self.device_info.get('axefx_detected', False)
         axefx_status = "🟢" if axefx_ok else "🔴"
         self.axefx_status.title = f"Axe-Fx {axefx_status}"
-        
-        # Agregar información de estado del control MIDI
-        if maschine_ok:
-            control_active = self.is_running and self.control_process and self.control_process.poll() is None
-            status_text = "[ACTIVE]" if control_active else "[READY]"
-            self.maschine_status.title = f"Maschine Mikro {maschine_status} {status_text}"
-        
-        if axefx_ok:
-            control_active = self.is_running and self.control_process and self.control_process.poll() is None
-            status_text = "[ACTIVE]" if control_active else "[READY]"
-            self.axefx_status.title = f"Axe-Fx {axefx_status} {status_text}"
         
         # Actualizar título principal
         self.update_guitar_icon()
@@ -386,7 +374,7 @@ class MAXEschineApp(rumps.App):
         """Ejecuta el control MIDI en segundo plano"""
         try:
             # Ejecutar el script principal
-            script_path = os.path.join(os.path.dirname(__file__), "maschine_to_axefx.py")
+            script_path = os.path.join(os.path.dirname(__file__), "realtime_monitor_console.py")
             if os.path.exists(script_path):
                 self.control_process = subprocess.Popen(
                     [sys.executable, script_path],
@@ -394,11 +382,9 @@ class MAXEschineApp(rumps.App):
                     stderr=subprocess.PIPE,
                     text=True
                 )
-                
                 # Esperar a que termine mientras el control esté activo
                 while self.is_running and self.control_process.poll() is None:
                     time.sleep(0.5)
-                
                 # Si el proceso terminó inesperadamente, actualizar estado
                 if self.is_running:
                     self.is_running = False
@@ -407,7 +393,6 @@ class MAXEschineApp(rumps.App):
             else:
                 print(f"❌ Script no encontrado: {script_path}")
                 self.is_running = False
-                
         except Exception as e:
             print(f"❌ Error en control de fondo: {e}")
             self.is_running = False
