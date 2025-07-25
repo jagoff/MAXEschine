@@ -240,33 +240,15 @@ class MAXEschineApp(rumps.App):
         # Iniciar control automáticamente
         self.start_control()
         
-        # Configurar actualización automática cada 2 segundos
-        self.timer = rumps.Timer(self.auto_update, 2)
+        # Configurar actualización automática cada 3 segundos
+        self.timer = rumps.Timer(self.auto_update, 3)
         self.timer.start()
-        
-        # Configurar actualización del menú cada 1 segundo
-        self.menu_timer = rumps.Timer(self.update_menu_display, 1)
-        self.menu_timer.start()
-        
-        # Configurar actualización forzada del menú cada 3 segundos
-        self.force_update_timer = rumps.Timer(self.force_menu_update, 3)
-        self.force_update_timer.start()
-    
-    def setup_menu(self):
-        """Set up the application menu (in English)"""
-        self.maschine_status = rumps.MenuItem("Maschine Mikro 🔴", callback=None)
-        self.axefx_status = rumps.MenuItem("Axe-Fx 🔴", callback=None)
-        self.menu = [
-            self.maschine_status,
-            self.axefx_status,
-            None,  # Separator
-            rumps.MenuItem("Open Real-time Monitor", callback=self.open_monitor),
-            rumps.MenuItem("Show Configuration", callback=self.show_config),
-            rumps.MenuItem("GitHub", callback=self.open_docs),
-            None,  # Separator
-            rumps.MenuItem("About", callback=self.show_about)
-        ]
-    
+
+    def auto_update(self, _=None):
+        """Actualización automática del estado"""
+        self.update_device_status()
+        self.update_menu_display()
+
     def update_device_status(self, _=None):
         """Update the detected MIDI device status (in English)"""
         self.device_info = detect_midi_devices()
@@ -277,38 +259,10 @@ class MAXEschineApp(rumps.App):
             self.device_info.get('axefx_detected', False)
         )
         
-        # Si hay cambios, forzar actualización del menú
+        # Si hay cambios, actualizar el menú
         if self.last_device_state != current_state:
             self.last_device_state = current_state
-            # Forzar actualización inmediata del menú
             self.update_menu_display()
-        
-        # La actualización visual del menú se hace en update_menu_display()
-    
-    def auto_update(self, _=None):
-        """Actualización automática del estado"""
-        self.update_device_status()
-
-    def update_guitar_icon(self):
-        """Actualiza el título dinámico con códigos de colores"""
-        if not self.device_info:
-            # Si no hay información de dispositivos, mostrar negro
-            self.title = "⚫ MAXEschine"
-            return
-
-        maschine_ok = self.device_info.get('maschine_detected', False)
-        axefx_ok = self.device_info.get('axefx_detected', False)
-
-        # Sistema de códigos de colores simplificado
-        if maschine_ok and axefx_ok:
-            # Verde: Ambos dispositivos conectados
-            self.title = "🟢 MAXEschine"
-        elif maschine_ok or axefx_ok:
-            # Amarillo: Solo un dispositivo conectado
-            self.title = "🟡 MAXEschine"
-        else:
-            # Negro: Ningún dispositivo conectado
-            self.title = "⚫ MAXEschine"
 
     def update_menu_display(self, _=None):
         """Actualiza la visualización del menú en tiempo real"""
@@ -331,24 +285,42 @@ class MAXEschineApp(rumps.App):
         
         # Actualizar título principal
         self.update_guitar_icon()
-    
 
-    
-    def force_menu_update(self, _=None):
-        """Fuerza la actualización del menú para que se vea en tiempo real"""
-        try:
-            # Forzar actualización del menú
-            if hasattr(self, 'menu'):
-                # Recrear el menú para forzar actualización
-                self.menu.clear()
-                self.setup_menu()
-                
-                # Restaurar el botón Quit
-                self.menu["Quit"] = rumps.MenuItem("Quit", callback=self.quit_app)
-                
-        except Exception as e:
-            # Error silencioso
-            pass
+    def update_guitar_icon(self):
+        """Actualiza el título dinámico con códigos de colores"""
+        if not self.device_info:
+            # Si no hay información de dispositivos, mostrar negro
+            self.title = "⚫ MAXEschine"
+            return
+
+        maschine_ok = self.device_info.get('maschine_detected', False)
+        axefx_ok = self.device_info.get('axefx_detected', False)
+
+        # Sistema de códigos de colores simplificado
+        if maschine_ok and axefx_ok:
+            # Verde: Ambos dispositivos conectados
+            self.title = "🟢 MAXEschine"
+        elif maschine_ok or axefx_ok:
+            # Amarillo: Solo un dispositivo conectado
+            self.title = "🟡 MAXEschine"
+        else:
+            # Negro: Ningún dispositivo conectado
+            self.title = "⚫ MAXEschine"
+
+    def setup_menu(self):
+        """Set up the application menu (in English)"""
+        self.maschine_status = rumps.MenuItem("Maschine Mikro 🔴", callback=None)
+        self.axefx_status = rumps.MenuItem("Axe-Fx 🔴", callback=None)
+        self.menu = [
+            self.maschine_status,
+            self.axefx_status,
+            None,  # Separator
+            rumps.MenuItem("Open Real-time Monitor", callback=self.open_monitor),
+            rumps.MenuItem("Show Configuration", callback=self.show_config),
+            rumps.MenuItem("GitHub", callback=self.open_docs),
+            None,  # Separator
+            rumps.MenuItem("About", callback=self.show_about)
+        ]
     
     def start_control(self, _=None):
         """Inicia el control MIDI en segundo plano automáticamente"""
