@@ -288,8 +288,8 @@ class MAXEschineApp(rumps.App):
     def update_guitar_icon(self):
         """Actualiza el título dinámico con códigos de colores"""
         if not self.device_info:
-            # Modo espera/idle cuando no hay información de dispositivos
-            self.title = "⏳ MAXEschine"
+            # Si no hay información de dispositivos, mostrar negro
+            self.title = "⚫ MAXEschine"
             return
 
         maschine_ok = self.device_info.get('maschine_detected', False)
@@ -305,17 +305,14 @@ class MAXEschineApp(rumps.App):
         else:
             # Negro: Ningún dispositivo conectado
             self.title = "⚫ MAXEschine"
-    
-    def auto_update(self, _=None):
-        """Actualización automática del estado"""
-        self.update_device_status()
-    
+
     def update_menu_display(self, _=None):
         """Actualiza la visualización del menú en tiempo real"""
         if not self.device_info:
-            # Modo espera/idle
-            self.maschine_status.title = "Maschine Mikro ⏳"
-            self.axefx_status.title = "Axe-Fx ⏳"
+            # Si no hay información de dispositivos, mostrar rojo en ambos
+            self.maschine_status.title = "Maschine Mikro 🔴"
+            self.axefx_status.title = "Axe-Fx 🔴"
+            self.update_guitar_icon()
             return
         
         # Actualizar estado de Maschine Mikro - solo verde o rojo
