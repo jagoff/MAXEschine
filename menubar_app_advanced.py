@@ -401,7 +401,7 @@ Axe-Fx: {'Connected' if self.device_info.get('axefx_detected') else 'Not Connect
     def open_docs(self, _=None):
         """Open documentation on GitHub (in English)"""
         import webbrowser
-        webbrowser.open("https://github.com/tu-usuario/maschine-axefx-control")
+        webbrowser.open("https://github.com/jagoff/MAXEschine")
     
     def open_monitor(self, _=None):
         """Open the real-time monitor console"""
