@@ -13,6 +13,7 @@ MAXEschine es una aplicación de menú de barra para macOS que permite controlar
 - 📱 **Interfaz Limpia**: Menú de barra con indicadores de estado
 - 🔒 **Instancia Única**: Solo una instancia puede ejecutarse
 - 🎨 **Indicadores Visuales**: Códigos de color para el estado de conexión
+- 📊 **Monitor en Tiempo Real**: Ventana GUI para monitorear actividad MIDI
 
 ## 🚀 Instalación
 
@@ -172,6 +173,41 @@ python3 menubar_app_advanced.py
 5. **Verifica que las escenas cambien correctamente**
 6. **Verifica que los efectos hagan bypass toggle**
 7. **Prueba el potenciómetro con diferentes External Controllers**
+
+## 📊 Monitor en Tiempo Real
+
+MAXEschine incluye un monitor en tiempo real que te permite ver toda la actividad MIDI del Maschine Mikro:
+
+### 🖥️ **Abrir el Monitor:**
+1. Haz clic en el ícono de guitarra 🎸 en la barra de menú
+2. Selecciona **"📊 Open Real-time Monitor"**
+3. Se abrirá una ventana con el monitor en tiempo real
+
+### 🎯 **Funcionalidades del Monitor:**
+- **📨 Log de Mensajes MIDI**: Ve todos los mensajes MIDI en tiempo real
+- **🎵 Estado de Pads**: Visualiza qué pads están activos
+- **🎚️ Estado de Efectos**: Ve qué efectos están ON/OFF
+- **🎛️ Controladores Externos**: Monitorea el controlador activo y potenciómetro
+- **📊 Estadísticas**: Contador de mensajes y tiempo de ejecución
+- **🟢/🔴 Indicadores Visuales**: Estados claros con códigos de color
+
+### 🎹 **Información Mostrada:**
+- **Pads 1-4**: Cambio de escenas (CC#35)
+- **Pads 5-16**: Bypass de efectos (CC#18-29)
+- **Botones Laterales**: Selección de controlador (CC#112-119)
+- **Potenciómetro**: Control de parámetros (CC#22)
+
+### 🚀 **Uso del Monitor:**
+1. **Iniciar Monitor**: Haz clic en "▶️ Iniciar Monitor"
+2. **Probar Pads**: Presiona los pads del Maschine Mikro
+3. **Ver Actividad**: Observa los mensajes en el log
+4. **Limpiar Log**: Usa "🗑️ Limpiar Log" para limpiar el historial
+5. **Detener Monitor**: Haz clic en "⏹️ Detener Monitor"
+
+### 🎸 **Ejecutar Monitor Independientemente:**
+```bash
+./venv/bin/python realtime_monitor_console.py
+```
 
 ## 🎸 ¡Tu Maschine Mikro estará completamente funcional con el Axe-Fx III!
 

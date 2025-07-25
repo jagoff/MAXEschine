@@ -11,6 +11,7 @@ import sys
 import os
 import fcntl
 import signal
+import json
 from pathlib import Path
 
 # Importar configuración
@@ -125,9 +126,11 @@ def detect_midi_devices():
                 break
         
         # Buscar Axe-Fx III
-        axefx_variants = ['axe-fx', 'axefx', 'axe fx']
+        axefx_variants = ['axe-fx', 'axefx', 'axe fx', 'axe-fx iii', 'axefx iii']
         axefx_output = None
+        axefx_input = None
         
+        # Buscar en puertos de salida
         for port in output_ports:
             for variant in axefx_variants:
                 if variant in port.lower():
@@ -136,12 +139,22 @@ def detect_midi_devices():
             if axefx_output:
                 break
         
+        # Buscar en puertos de entrada también
+        for port in input_ports:
+            for variant in axefx_variants:
+                if variant in port.lower():
+                    axefx_input = port
+                    break
+            if axefx_input:
+                break
+        
         return {
             'maschine_detected': maschine_input is not None,
             'maschine_input': maschine_input,
             'maschine_output': maschine_output,
-            'axefx_detected': axefx_output is not None,
+            'axefx_detected': axefx_output is not None or axefx_input is not None,
             'axefx_output': axefx_output,
+            'axefx_input': axefx_input,
             'input_ports': input_ports,
             'output_ports': output_ports,
             'error': None
@@ -154,6 +167,7 @@ def detect_midi_devices():
             'maschine_output': None,
             'axefx_detected': False,
             'axefx_output': None,
+            'axefx_input': None,
             'input_ports': [],
             'output_ports': [],
             'error': 'mido no está instalado'
@@ -165,6 +179,7 @@ def detect_midi_devices():
             'maschine_output': None,
             'axefx_detected': False,
             'axefx_output': None,
+            'axefx_input': None,
             'input_ports': [],
             'output_ports': [],
             'error': str(e)
@@ -211,6 +226,7 @@ class MAXEschineApp(rumps.App):
         self.control_process = None
         self.control_thread = None
         self.device_info = None
+        self.last_device_state = None  # Para detectar cambios en el estado
         
         # Configurar menú
         self.setup_menu()
@@ -224,9 +240,17 @@ class MAXEschineApp(rumps.App):
         # Iniciar control automáticamente
         self.start_control()
         
-        # Configurar actualización automática cada 5 segundos
-        self.timer = rumps.Timer(self.auto_update, 5)
+        # Configurar actualización automática cada 2 segundos
+        self.timer = rumps.Timer(self.auto_update, 2)
         self.timer.start()
+        
+        # Configurar actualización del menú cada 1 segundo
+        self.menu_timer = rumps.Timer(self.update_menu_display, 1)
+        self.menu_timer.start()
+        
+        # Configurar actualización forzada del menú cada 3 segundos
+        self.force_update_timer = rumps.Timer(self.force_menu_update, 3)
+        self.force_update_timer.start()
     
     def setup_menu(self):
         """Set up the application menu (in English)"""
@@ -236,6 +260,7 @@ class MAXEschineApp(rumps.App):
             self.maschine_status,
             self.axefx_status,
             None,  # Separator
+            rumps.MenuItem("Open Real-time Monitor", callback=self.open_monitor),
             rumps.MenuItem("Show Configuration", callback=self.show_config),
             rumps.MenuItem("GitHub", callback=self.open_docs),
             None,  # Separator
@@ -245,17 +270,20 @@ class MAXEschineApp(rumps.App):
     def update_device_status(self, _=None):
         """Update the detected MIDI device status (in English)"""
         self.device_info = detect_midi_devices()
-        maschine_ok = self.device_info.get('maschine_detected', False)
-        maschine_status = "🟢" if maschine_ok else "🔴"
-        self.maschine_status.title = f"Maschine Mikro {maschine_status}"
-        axefx_ok = self.device_info.get('axefx_detected', False)
-        axefx_status = "🟢" if axefx_ok else "🔴"
-        self.axefx_status.title = f"Axe-Fx {axefx_status}"
         
-
+        # Detectar cambios en el estado
+        current_state = (
+            self.device_info.get('maschine_detected', False),
+            self.device_info.get('axefx_detected', False)
+        )
         
-        self.update_guitar_icon()
-        pass
+        # Si hay cambios, forzar actualización del menú
+        if self.last_device_state != current_state:
+            self.last_device_state = current_state
+            # Forzar actualización inmediata del menú
+            self.update_menu_display()
+        
+        # La actualización visual del menú se hace en update_menu_display()
     
     def update_guitar_icon(self):
         """Actualiza el título dinámico con códigos de colores"""
@@ -264,7 +292,9 @@ class MAXEschineApp(rumps.App):
 
         maschine_ok = self.device_info.get('maschine_detected', False)
         axefx_ok = self.device_info.get('axefx_detected', False)
-        control_ok = self.is_running
+        
+        # Verificar si el control está realmente funcionando
+        control_ok = self.is_running and self.control_process and self.control_process.poll() is None
 
         # Sistema de códigos de colores
         if maschine_ok and axefx_ok and control_ok:
@@ -284,7 +314,52 @@ class MAXEschineApp(rumps.App):
         """Actualización automática del estado"""
         self.update_device_status()
     
+    def update_menu_display(self, _=None):
+        """Actualiza la visualización del menú en tiempo real"""
+        if not self.device_info:
+            return
+        
+        # Actualizar estado de Maschine Mikro
+        maschine_ok = self.device_info.get('maschine_detected', False)
+        maschine_status = "🟢" if maschine_ok else "🔴"
+        self.maschine_status.title = f"Maschine Mikro {maschine_status}"
+        
+        # Actualizar estado de Axe-Fx
+        axefx_ok = self.device_info.get('axefx_detected', False)
+        axefx_status = "🟢" if axefx_ok else "🔴"
+        self.axefx_status.title = f"Axe-Fx {axefx_status}"
+        
+        # Agregar información de estado del control MIDI
+        if maschine_ok:
+            control_active = self.is_running and self.control_process and self.control_process.poll() is None
+            status_text = "[ACTIVE]" if control_active else "[READY]"
+            self.maschine_status.title = f"Maschine Mikro {maschine_status} {status_text}"
+        
+        if axefx_ok:
+            control_active = self.is_running and self.control_process and self.control_process.poll() is None
+            status_text = "[ACTIVE]" if control_active else "[READY]"
+            self.axefx_status.title = f"Axe-Fx {axefx_status} {status_text}"
+        
+        # Actualizar título principal
+        self.update_guitar_icon()
+    
 
+    
+    def force_menu_update(self, _=None):
+        """Fuerza la actualización del menú para que se vea en tiempo real"""
+        try:
+            # Forzar actualización del menú
+            if hasattr(self, 'menu'):
+                # Recrear el menú para forzar actualización
+                self.menu.clear()
+                self.setup_menu()
+                
+                # Restaurar el botón Quit
+                self.menu["Quit"] = rumps.MenuItem("Quit", callback=self.quit_app)
+                
+        except Exception as e:
+            # Error silencioso
+            pass
     
     def start_control(self, _=None):
         """Inicia el control MIDI en segundo plano automáticamente"""
@@ -369,6 +444,36 @@ Axe-Fx: {'Connected' if self.device_info.get('axefx_detected') else 'Not Connect
         """Open documentation on GitHub (in English)"""
         import webbrowser
         webbrowser.open("https://github.com/tu-usuario/maschine-axefx-control")
+    
+    def open_monitor(self, _=None):
+        """Open the real-time monitor console"""
+        try:
+            import subprocess
+            import sys
+            import os
+            
+            # Ruta al script del monitor que ya funciona
+            monitor_script = os.path.join(os.path.dirname(__file__), "realtime_monitor_console.py")
+            
+            if os.path.exists(monitor_script):
+                # Ejecutar el monitor en una nueva ventana de terminal
+                # Comando robusto que detecta entorno virtual automáticamente
+                command = f'cd {os.path.dirname(__file__)} && [ -f venv/bin/activate ] && source venv/bin/activate; python3 realtime_monitor_console.py; exit'
+                
+                subprocess.Popen([
+                    "osascript", "-e", 
+                    f'tell application "Terminal" to do script "{command}"'
+                ])
+            else:
+                rumps.alert(
+                    title="Error",
+                    message="Monitor script not found: realtime_monitor_console.py"
+                )
+        except Exception as e:
+            rumps.alert(
+                title="Error",
+                message=f"Could not open monitor: {str(e)}"
+            )
     
     def show_about(self, _=None):
         """Show about information (in English)"""

@@ -1,0 +1,32 @@
+{
+  "description": "Mapeo de pads del Maschine Mikro a efectos del Axe-Fx III",
+  "version": "2.0.0",
+  "midi_channel": 1,
+  "default_cc_value": 127,
+  "pads": {
+    "5": {"note": 24, "cc": 18, "effect": "GEQ1", "description": "Graphic EQ 1"},
+    "6": {"note": 25, "cc": 19, "effect": "REVERB1", "description": "Reverb 1"},
+    "7": {"note": 26, "cc": 20, "effect": "DELAY1", "description": "Delay 1"},
+    "8": {"note": 27, "cc": 21, "effect": "COMP1", "description": "Compressor 1"},
+    "9": {"note": 28, "cc": 22, "effect": "AMP1", "description": "Amp 1"},
+    "10": {"note": 29, "cc": 23, "effect": "AMP2", "description": "Amp 2"},
+    "11": {"note": 30, "cc": 24, "effect": "DRIVE1", "description": "Drive 1"},
+    "12": {"note": 31, "cc": 25, "effect": "DRIVE2", "description": "Drive 2"},
+    "13": {"note": 32, "cc": 26, "effect": "CAB1", "description": "Cabinet 1"},
+    "14": {"note": 33, "cc": 27, "effect": "CAB2", "description": "Cabinet 2"},
+    "15": {"note": 34, "cc": 28, "effect": "GATE1", "description": "Gate 1"},
+    "16": {"note": 35, "cc": 29, "effect": "PITCH1", "description": "Pitch 1"}
+  },
+  "presets": {
+    "clean": {"name": "Clean", "preset_number": 1},
+    "crunch": {"name": "Crunch", "preset_number": 2},
+    "lead": {"name": "Lead", "preset_number": 3},
+    "high_gain": {"name": "High Gain", "preset_number": 4}
+  },
+  "scenes": {
+    "scene1": {"name": "Scene 1", "scene_number": 1},
+    "scene2": {"name": "Scene 2", "scene_number": 2},
+    "scene3": {"name": "Scene 3", "scene_number": 3},
+    "scene4": {"name": "Scene 4", "scene_number": 4}
+  }
+} 
