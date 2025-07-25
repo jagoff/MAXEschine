@@ -39,7 +39,13 @@ except ImportError:
         "AMP1": 22, "AMP2": 23, "DRIVE1": 24, "DRIVE2": 25,
         "CAB1": 26, "CAB2": 27, "GATE1": 28, "PITCH1": 29
     }
-    LATERAL_BUTTONS = {112: 1, 113: 2, 114: 3, 115: 4, 116: 5, 117: 6, 118: 7, 119: 8}
+    # Mapeo correcto de botones laterales para Maschine Mikro (CC 16-19)
+    LATERAL_BUTTONS = {
+        16: 1,  # Botón 1
+        17: 2,  # Botón 2
+        18: 3,  # Botón 3
+        19: 4   # Botón 4
+    }
     SCENE_SELECT_CC = 35
 
 
@@ -50,6 +56,7 @@ class RealtimeMonitor:
         self.root = None
         self.midi_input = None
         self.midi_output = None
+        self.maschine_outport = None  # Puerto de salida para feedback de LEDs
         self.running = False
         self.message_count = 0
         self.start_time = time.time()
@@ -73,7 +80,8 @@ class RealtimeMonitor:
     def create_window(self):
         """Crea la ventana principal del monitor"""
         self.root = tk.Tk()
-        self.root.title("🎸 MAXEschine - Monitor en Tiempo Real")
+        # Eliminar el título personalizado
+        # self.root.title("🎸 MAXEschine - Monitor en Tiempo Real")
         self.root.geometry("800x600")
         self.root.configure(bg='#2b2b2b')
         
@@ -264,70 +272,73 @@ class RealtimeMonitor:
         self.root.after(1000, self.update_stats)
     
     def start_monitoring(self):
-        """Inicia el monitoreo MIDI"""
+        """Inicia el monitoreo MIDI y abre el puerto de salida de la Maschine para feedback de LEDs"""
         try:
             # Buscar puerto MIDI de entrada
             input_ports = mido.get_input_names()
             maschine_input = None
-            
             for port in input_ports:
                 if MASCHINE_MIDI_NAME.lower() in port.lower():
                     maschine_input = port
                     break
-            
             if not maschine_input:
                 self.log_message("❌ No se encontró el Maschine Mikro")
                 return
-            
             # Conectar al puerto MIDI
             self.midi_input = mido.open_input(maschine_input, callback=self.midi_callback)
-            
             # Buscar puerto de salida para Axe-Fx
             output_ports = mido.get_output_names()
             axefx_output = None
-            
             for port in output_ports:
                 if AXEFX_MIDI_NAME.lower() in port.lower():
                     axefx_output = port
                     break
-            
             if axefx_output:
                 self.midi_output = mido.open_output(axefx_output)
                 self.log_message(f"✅ Conectado a Axe-Fx: {axefx_output}")
             else:
                 self.log_message("⚠️ Axe-Fx no encontrado - Modo simulación")
-            
+            # Abrir puerto de salida de la Maschine para feedback de LEDs
+            maschine_output = None
+            for port in output_ports:
+                if MASCHINE_OUTPUT_NAME.lower() in port.lower():
+                    maschine_output = port
+                    break
+            if maschine_output:
+                self.maschine_outport = mido.open_output(maschine_output)
+                self.log_message(f"✅ Feedback LED habilitado: {maschine_output}")
+            else:
+                self.maschine_outport = None
+                self.log_message("⚠️ Feedback LED no disponible (no se encontró salida Maschine)")
             self.running = True
             self.start_time = time.time()
             self.message_count = 0
-            
             # Actualizar UI
             self.status_label.config(text="🟢 Conectado")
             self.start_button.config(state='disabled')
             self.stop_button.config(state='normal')
-            
             self.log_message(f"🎸 Monitor iniciado - Conectado a: {maschine_input}")
-            
+            # Reflejar estado inicial en LEDs
+            self.update_led_feedback()
         except Exception as e:
             self.log_message(f"❌ Error iniciando monitor: {e}")
     
     def stop_monitoring(self):
-        """Detiene el monitoreo MIDI"""
+        """Detiene el monitoreo MIDI y cierra el puerto de salida de la Maschine"""
         self.running = False
-        
         if self.midi_input:
             self.midi_input.close()
             self.midi_input = None
-        
         if self.midi_output:
             self.midi_output.close()
             self.midi_output = None
-        
+        if self.maschine_outport:
+            self.maschine_outport.close()
+            self.maschine_outport = None
         # Actualizar UI
         self.status_label.config(text="🔴 Desconectado")
         self.start_button.config(state='normal')
         self.stop_button.config(state='disabled')
-        
         self.log_message("⏹️ Monitor detenido")
     
     def midi_callback(self, msg):
@@ -346,7 +357,6 @@ class RealtimeMonitor:
         """Maneja mensajes de nota ON (pads)"""
         note = msg.note
         velocity = msg.velocity
-        
         # Pads 1-4: Cambio de escenas (modo radiobutton)
         if note in NOTE_TO_SCENE:
             scene = NOTE_TO_SCENE[note]
@@ -354,7 +364,6 @@ class RealtimeMonitor:
             self.active_scene = pad_num  # Solo uno activo
             self.log_message(f"🎵 Pad {pad_num} → Escena {scene}")
             self.update_pad_status(pad_num, True)
-            
             # Enviar a Axe-Fx
             if self.midi_output:
                 scene_value = scene - 1
@@ -362,19 +371,17 @@ class RealtimeMonitor:
                                                  control=SCENE_SELECT_CC, 
                                                  value=scene_value))
                 self.log_message(f"   → CC#{SCENE_SELECT_CC} = {scene_value}")
-            # No reset automático: el estado se mantiene hasta que se seleccione otro
-        
+            # Reflejar en LEDs
+            self.update_led_feedback()
         # Pads 5-16: Bypass de efectos
         elif note in PAD_TO_EFFECT:
             effect_name = PAD_TO_EFFECT[note]
             pad_num = note - 19
             self.log_message(f"🎚️ Pad {pad_num} → {effect_name}")
-            
             # Toggle estado del efecto
             self.effect_states[effect_name] = not self.effect_states[effect_name]
             status = self.effect_states[effect_name]
             self.update_pad_status(pad_num, status, effect_name)
-            
             # Enviar a Axe-Fx
             if self.midi_output:
                 cc = EFFECT_CC_MAPPING.get(effect_name)
@@ -383,6 +390,8 @@ class RealtimeMonitor:
                                                      control=cc, 
                                                      value=127))
                     self.log_message(f"   → CC#{cc} = 127 ({'ON' if status else 'OFF'})")
+            # Reflejar en LEDs
+            self.update_led_feedback()
         else:
             self.log_message(f"⚠️ Nota no mapeada: {note}")
     
@@ -390,20 +399,18 @@ class RealtimeMonitor:
         """Maneja mensajes de Control Change"""
         cc = msg.control
         value = msg.value
-        
         # Botones laterales: Selección de controlador
         if cc in LATERAL_BUTTONS:
             button_num = LATERAL_BUTTONS[cc]
             controller_num = button_num
             self.log_message(f"🎛️ Botón {button_num} → External Controller {controller_num}")
             self.update_controller_status(controller_num, button_num)
-            # Feedback visual robusto: solo uno activo
-        
+            # Reflejar en LEDs
+            self.update_led_feedback()
         # Potenciómetro: Control de parámetros
         elif cc == 22:
             self.log_message(f"🎚️ Potenciómetro: {value}")
             self.update_controller_status(self.active_controller, self.active_button, value)
-            
             # Enviar a Axe-Fx
             if self.midi_output:
                 controller_cc = 15 + self.active_controller  # CC 16-23
@@ -428,6 +435,28 @@ class RealtimeMonitor:
         """Ejecuta la ventana del monitor"""
         self.create_window()
         self.root.mainloop()
+
+    def update_led_feedback(self):
+        """Feedback radiobutton real para barra lateral Maschine Mikro (idéntico al backup funcional)"""
+        if not self.maschine_outport:
+            return
+        # Apagar todos los LEDs laterales
+        for cc in LATERAL_BUTTONS.keys():
+            self.maschine_outport.send(mido.Message('control_change', channel=0, control=cc, value=0))
+        # Encender solo el LED del botón activo
+        for cc, button_num in LATERAL_BUTTONS.items():
+            if button_num == self.active_button:
+                self.maschine_outport.send(mido.Message('control_change', channel=0, control=cc, value=127))
+        # (El feedback de pads y efectos se mantiene igual)
+        for i in range(1, 5):
+            note = 35 + i  # Notas 36-39
+            velocity = 127 if i == self.active_scene else 0
+            self.maschine_outport.send(mido.Message('note_on', note=note, velocity=velocity))
+        for idx, effect in enumerate(EFFECT_CC_MAPPING.keys()):
+            pad_num = idx + 5
+            note = 19 + pad_num  # Notas 24-35
+            velocity = 127 if self.effect_states[effect] else 0
+            self.maschine_outport.send(mido.Message('note_on', note=note, velocity=velocity))
 
 
 def main():
