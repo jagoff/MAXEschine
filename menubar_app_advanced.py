@@ -295,25 +295,28 @@ class MAXEschineApp(rumps.App):
         self.update_guitar_icon()
 
     def update_guitar_icon(self):
-        """Actualiza el título dinámico con códigos de colores"""
+        """Actualiza el título dinámico con códigos de colores y cambia el icono"""
         if not self.device_info:
-            # Si no hay información de dispositivos, mostrar negro
+            # Si no hay información de dispositivos, mostrar negro y icono B/N
             self.title = "⚫ MAXEschine"
+            self.icon = os.path.join(os.path.dirname(__file__), "icon_bw.png")
             return
 
         maschine_ok = self.device_info.get('maschine_detected', False)
         axefx_ok = self.device_info.get('axefx_detected', False)
 
-        # Sistema de códigos de colores simplificado
         if maschine_ok and axefx_ok:
-            # Verde: Ambos dispositivos conectados
+            # Verde: Ambos dispositivos conectados, icono a color
             self.title = "🟢 MAXEschine"
+            self.icon = os.path.join(os.path.dirname(__file__), "icon_color.png")
         elif maschine_ok or axefx_ok:
-            # Amarillo: Solo un dispositivo conectado
+            # Amarillo: Solo un dispositivo conectado, icono a color
             self.title = "🟡 MAXEschine"
+            self.icon = os.path.join(os.path.dirname(__file__), "icon_color.png")
         else:
-            # Negro: Ningún dispositivo conectado
+            # Negro: Ningún dispositivo conectado, icono B/N
             self.title = "⚫ MAXEschine"
+            self.icon = os.path.join(os.path.dirname(__file__), "icon_bw.png")
 
     def setup_menu(self):
         """Set up the application menu (in English)"""
