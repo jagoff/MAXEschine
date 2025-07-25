@@ -254,8 +254,8 @@ class MAXEschineApp(rumps.App):
     
     def setup_menu(self):
         """Set up the application menu (in English)"""
-        self.maschine_status = rumps.MenuItem("Maschine Mikro ⏳", callback=None)
-        self.axefx_status = rumps.MenuItem("Axe-Fx ⏳", callback=None)
+        self.maschine_status = rumps.MenuItem("Maschine Mikro 🔴", callback=None)
+        self.axefx_status = rumps.MenuItem("Axe-Fx 🔴", callback=None)
         self.menu = [
             self.maschine_status,
             self.axefx_status,
