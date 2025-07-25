@@ -39,7 +39,7 @@ except ImportError:
         "AMP1": 22, "AMP2": 23, "DRIVE1": 24, "DRIVE2": 25,
         "CAB1": 26, "CAB2": 27, "GATE1": 28, "PITCH1": 29
     }
-    LATERAL_BUTTONS = {112: 1, 113: 2, 114: 3, 115: 4, 116: 5, 117: 6, 118: 7, 119: 8}
+    LATERAL_BUTTONS = {16: 1, 17: 2, 18: 3, 19: 4, 20: 5, 21: 6, 22: 7, 23: 8}
     SCENE_SELECT_CC = 35
 
 
@@ -49,13 +49,16 @@ class ConsoleMonitor:
     def __init__(self):
         self.midi_input = None
         self.midi_output = None
+        self.maschine_outport = None  # Puerto de salida para controlar luces del Maschine
         self.running = False
         self.message_count = 0
         self.start_time = time.time()
         self.effect_states = {}
-        self.active_controller = 1
+        self.active_controller = 1  # Por defecto, controlador 1
         self.active_button = 1
         self.pot_value = 0
+        self.last_lateral_button = 1  # Último botón lateral usado
+        self.lateral_button_states = {1: False, 2: False, 3: False, 4: False, 5: False, 6: False, 7: False, 8: False}  # Estado de cada botón
         
         # Buffer para mensajes recientes
         self.recent_messages = deque(maxlen=50)
@@ -103,11 +106,19 @@ class ConsoleMonitor:
             status = "ON" if self.effect_states[effect] else "OFF"
             print(f"  PAD {pad_num:02d} CC#{cc:02d} {effect:8s} {status}")
         
-        # Panel de Controladores
+        # Panel de Controladores con estado de botones laterales
         print("\n🎛️ CONTROLADORES EXTERNOS:")
         print("-" * 30)
         print(f"  Controller {self.active_controller} CC#{15 + self.active_controller}")
         print(f"  Potenciómetro: {self.pot_value:3d}")
+        print(f"  Último botón usado: {self.last_lateral_button}")
+        
+        # Estado de botones laterales
+        print("\n🔘 BOTONES LATERALES:")
+        print("-" * 30)
+        for button_num in range(1, 9):
+            status = "🟢" if self.lateral_button_states[button_num] else "⚫"
+            print(f"  Botón {button_num}: {status}")
     
     def print_recent_messages(self):
         """Imprime los mensajes recientes"""
@@ -216,6 +227,23 @@ class ConsoleMonitor:
             else:
                 self.add_message("⚠️ Axe-Fx no encontrado - Modo simulación")
             
+            # Buscar puerto de salida para Maschine (para controlar luces)
+            maschine_output = None
+            for port in output_ports:
+                if MASCHINE_OUTPUT_NAME.lower() in port.lower():
+                    maschine_output = port
+                    break
+            
+            if maschine_output:
+                self.maschine_outport = mido.open_output(maschine_output)
+                self.add_message(f"✅ Conectado a Maschine: {maschine_output}")
+                
+                # Activar automáticamente el último botón lateral usado o el botón 1 por defecto
+                self.activate_lateral_button(self.last_lateral_button)
+                self.add_message(f"🎛️ Activado automáticamente: Botón lateral {self.last_lateral_button}")
+            else:
+                self.add_message("⚠️ Maschine Output no encontrado - No se pueden controlar luces")
+            
             self.running = True
             self.start_time = time.time()
             self.message_count = 0
@@ -238,6 +266,10 @@ class ConsoleMonitor:
         if self.midi_output:
             self.midi_output.close()
             self.midi_output = None
+        
+        if self.maschine_outport:
+            self.maschine_outport.close()
+            self.maschine_outport = None
         
         self.add_message("⏹️ Monitor detenido")
     
@@ -292,18 +324,100 @@ class ConsoleMonitor:
         else:
             self.add_message(f"⚠️ Nota no mapeada: {note}")
     
+    def activate_lateral_button(self, button_num):
+        """Activa un botón lateral específico (radiobutton)"""
+        if button_num < 1 or button_num > 8:
+            return
+        
+        # Desactivar todos los botones
+        for i in range(1, 9):
+            self.lateral_button_states[i] = False
+        
+        # Activar el botón seleccionado
+        self.lateral_button_states[button_num] = True
+        self.active_controller = button_num
+        self.active_button = button_num
+        self.last_lateral_button = button_num
+        
+        # PRIMERO: Controlar luces físicas (radiobutton)
+        self.control_lateral_lights(button_num)
+        
+        # SEGUNDO: Enviar mensaje MIDI al Axe-Fx para activar el controlador
+        if self.midi_output:
+            controller_cc = 15 + button_num  # CC 16-23
+            self.midi_output.send(mido.Message('control_change', 
+                                             control=controller_cc, 
+                                             value=127))
+            self.add_message(f"🎛️ Activado: External Controller {button_num} (CC#{controller_cc})")
+    
+    def control_lateral_lights(self, active_button):
+        """Controla las luces físicas del Maschine Mikro usando MIDI CC"""
+        if not self.maschine_outport:
+            return
+            
+        try:
+            # Mapeo de botones laterales a luces (CC# para controlar luces)
+            BUTTON_TO_LIGHT = {
+                1: 0,  # Botón 1 → Luz 1
+                2: 1,  # Botón 2 → Luz 2
+                3: 2,  # Botón 3 → Luz 3
+                4: 3,  # Botón 4 → Luz 4
+                5: 4,  # Botón 5 → Luz 5
+                6: 5,  # Botón 6 → Luz 6
+                7: 6,  # Botón 7 → Luz 7
+                8: 7,  # Botón 8 → Luz 8
+            }
+            
+            # Mapeo de luces a CC# (del backup funcional - CC#112-119)
+            LIGHT_CC_MAP = {
+                0: 112,  # Luz 1 → CC#112 (mismo que botón 1)
+                1: 113,  # Luz 2 → CC#113 (mismo que botón 2)
+                2: 114,  # Luz 3 → CC#114 (mismo que botón 3)
+                3: 115,  # Luz 4 → CC#115 (mismo que botón 4)
+                4: 116,  # Luz 5 → CC#116 (mismo que botón 5)
+                5: 117,  # Luz 6 → CC#117 (mismo que botón 6)
+                6: 118,  # Luz 7 → CC#118 (mismo que botón 7)
+                7: 119,  # Luz 8 → CC#119 (mismo que botón 8)
+            }
+            
+            # Primero apagar todas las luces laterales
+            for light_num in range(8):
+                if light_num in LIGHT_CC_MAP:
+                    cc = LIGHT_CC_MAP[light_num]
+                    # Usar valores diferentes para distinguir entre botón presionado (127) y luz prendida (64)
+                    self.maschine_outport.send(mido.Message('control_change', control=cc, value=0, channel=0))
+                    time.sleep(0.01)  # Pequeña pausa para evitar saturar el MIDI
+            
+            # Prender SOLO la luz del botón activo (radio button behavior)
+            if active_button in BUTTON_TO_LIGHT:
+                light_num = BUTTON_TO_LIGHT[active_button]
+                if light_num in LIGHT_CC_MAP:
+                    cc = LIGHT_CC_MAP[light_num]
+                    # Usar valor 64 para luz prendida (diferente de 127 para botón presionado)
+                    self.maschine_outport.send(mido.Message('control_change', control=cc, value=64, channel=0))
+                    time.sleep(0.01)
+                    self.add_message(f"💡 Luz lateral {light_num} prendida (botón {active_button} activo)")
+                else:
+                    self.add_message(f"❌ Error: Luz {light_num} no mapeada")
+            else:
+                self.add_message(f"❌ Error: Botón {active_button} no mapeado")
+                
+        except Exception as e:
+            self.add_message(f"❌ Error controlando luces: {e}")
+    
     def handle_control_change(self, msg):
         """Maneja mensajes de Control Change"""
         cc = msg.control
         value = msg.value
         
-        # Botones laterales: Selección de controlador
+        # Botones laterales: Selección de controlador (RADIOBUTTON)
         if cc in LATERAL_BUTTONS:
             button_num = LATERAL_BUTTONS[cc]
-            controller_num = button_num
-            self.active_controller = controller_num
-            self.active_button = button_num
-            self.add_message(f"Button {button_num} Controller {controller_num}")
+            
+            # Comportamiento RADIOBUTTON: solo uno activo a la vez
+            if value > 0:  # Solo cuando se presiona (no cuando se suelta)
+                self.activate_lateral_button(button_num)
+                self.add_message(f"Button {button_num} Controller {button_num} [RADIOBUTTON]")
             
         # Potenciómetro: Control de parámetros
         elif cc == 22:

@@ -1,29 +1,36 @@
 #!/bin/bash
+# MAXEschine - Instalador y lanzador automático para macOS
+set -e
 
-# MAXEschine Startup Script
-# Control completo de Maschine Mikro + Axe-Fx III
+echo "🎸 MAXEschine - Instalador automático"
+echo "======================================"
 
-echo "🎸 MAXEschine - Iniciando..."
-echo "=================================="
-
-# Activar entorno virtual
-source venv/bin/activate
-
-# Verificar que el entorno virtual esté activado
-if [ $? -eq 0 ]; then
-    echo "✅ Entorno virtual activado"
-else
-    echo "❌ Error activando entorno virtual"
-    exit 1
+# 1. Crear entorno virtual si no existe
+if [ ! -d "venv" ]; then
+  echo "[INFO] Creando entorno virtual Python..."
+  python3 -m venv venv
 fi
 
-# Verificar dependencias
-echo "📦 Verificando dependencias..."
-pip list | grep -E "(mido|rumps|rtmidi)" || {
-    echo "❌ Faltan dependencias. Instalando..."
-    pip install -r requirements.txt
-}
+# 2. Activar entorno virtual
+echo "[INFO] Activando entorno virtual..."
+source venv/bin/activate
 
-# Iniciar aplicación
-echo "🚀 Iniciando MAXEschine..."
+# 3. Instalar Homebrew si no está
+if ! command -v brew &> /dev/null; then
+  echo "[INFO] Instalando Homebrew..."
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+fi
+
+# 4. Instalar librerías nativas requeridas
+echo "[INFO] Instalando dependencias del sistema..."
+brew install --quiet python-tk hidapi
+
+# 5. Instalar dependencias Python
+echo "[INFO] Instalando dependencias Python..."
+pip install --upgrade pip
+pip install -r requirements.txt
+
+# 6. Ejecutar la app principal
+echo "[INFO] Iniciando MAXEschine..."
+echo "✅ Instalación completada. MAXEschine se está iniciando..."
 python3 menubar_app_advanced.py 

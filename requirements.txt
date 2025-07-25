@@ -1,3 +1,5 @@
 mido>=1.2.10
 python-rtmidi>=1.4.9
-rumps>=0.4.0 
+rumps>=0.4.0
+Pillow>=9.0.0
+pyobjc-framework-Cocoa>=11.1 

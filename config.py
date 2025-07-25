@@ -83,7 +83,7 @@ EXTERNAL_CONTROLLERS = {
 # BOTONES LATERALES
 # =============================================================================
 
-# CC# para botones laterales (selección de controlador activo)
+# CC# para botones laterales (selección de controlador activo) - CORREGIDO para MK1 (del backup funcional)
 LATERAL_BUTTONS = {
     112: 1,  # Botón 1 → External Controller 1
     113: 2,  # Botón 2 → External Controller 2
@@ -99,7 +99,7 @@ LATERAL_BUTTONS = {
 # CONTROL DE LUCES
 # =============================================================================
 
-# Mapeo de botones laterales a luces
+# Mapeo de botones laterales a luces - CORREGIDO para MK1 (del backup funcional)
 BUTTON_TO_LIGHT = {
     112: 0,  # Botón 1 → Luz 1
     113: 1,  # Botón 2 → Luz 2
