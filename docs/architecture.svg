@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 660" width="980" height="660" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif">
+  <defs>
+    <marker id="arrowBlue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-start">
+      <path d="M0,0 L10,5 L0,10 z" fill="#38bdf8"/>
+    </marker>
+    <marker id="arrowGreen" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-start">
+      <path d="M0,0 L10,5 L0,10 z" fill="#34d399"/>
+    </marker>
+    <marker id="arrowAmber" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-start">
+      <path d="M0,0 L10,5 L0,10 z" fill="#f59e0b"/>
+    </marker>
+    <marker id="arrowGray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-start">
+      <path d="M0,0 L10,5 L0,10 z" fill="#64748b"/>
+    </marker>
+  </defs>
+
+  <!-- background -->
+  <rect x="0" y="0" width="980" height="660" rx="14" fill="#0f172a" stroke="#1e293b" stroke-width="1.5"/>
+
+  <!-- title -->
+  <text x="490" y="44" text-anchor="middle" fill="#e2e8f0" font-size="26" font-weight="700">MAXEschine &#8212; Cómo funciona / How it works</text>
+  <text x="490" y="70" text-anchor="middle" fill="#94a3b8" font-size="13">Maschine Mikro &#8594; MIDI &#8594; Axe-Fx III</text>
+
+  <!-- menu bar supervisor -->
+  <rect x="320" y="92" width="340" height="60" rx="10" fill="#15233b" stroke="#475569" stroke-width="1.2"/>
+  <text x="490" y="116" text-anchor="middle" fill="#e2e8f0" font-size="13.5" font-weight="600">menubar_app_advanced.py &#183; barra de menú (rumps)</text>
+  <text x="490" y="135" text-anchor="middle" fill="#94a3b8" font-size="11.5">detecta dispositivos &#183; lanza el motor &#183; icono de estado</text>
+  <!-- supervisor arrow down -->
+  <line x1="490" y1="152" x2="490" y2="206" stroke="#64748b" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#arrowGray)"/>
+
+  <!-- ===== Maschine box ===== -->
+  <rect x="40" y="210" width="250" height="300" rx="12" fill="#132235" stroke="#38bdf8" stroke-width="1.4"/>
+  <text x="165" y="244" text-anchor="middle" fill="#e2e8f0" font-size="16" font-weight="700">NI Maschine Mikro</text>
+  <text x="165" y="264" text-anchor="middle" fill="#94a3b8" font-size="11">controlador / controller</text>
+  <line x1="64" y1="280" x2="266" y2="280" stroke="#243b53" stroke-width="1"/>
+  <text x="64" y="312" fill="#cbd5e1" font-size="12.5">Pads 1&#8211;4 &#8594; notes 36&#8211;39</text>
+  <text x="64" y="350" fill="#cbd5e1" font-size="12.5">Pads 5&#8211;16 &#8594; notes 24&#8211;35</text>
+  <text x="64" y="388" fill="#cbd5e1" font-size="12.5">8 botones laterales &#8594; CC 112&#8211;119</text>
+  <text x="64" y="426" fill="#cbd5e1" font-size="12.5">Potenciómetro / knob &#8594; CC 22</text>
+  <text x="64" y="470" fill="#64748b" font-size="11">USB MIDI: in (pads) + out (luces)</text>
+
+  <!-- ===== Engine box ===== -->
+  <rect x="365" y="210" width="250" height="300" rx="12" fill="#132235" stroke="#a78bfa" stroke-width="1.4"/>
+  <text x="490" y="244" text-anchor="middle" fill="#e2e8f0" font-size="14.5" font-weight="700">realtime_monitor_console.py</text>
+  <text x="490" y="264" text-anchor="middle" fill="#94a3b8" font-size="11">motor MIDI / engine (mido)</text>
+  <line x1="389" y1="280" x2="591" y2="280" stroke="#243b53" stroke-width="1"/>
+  <text x="389" y="304" fill="#a78bfa" font-size="11.5" font-weight="600">Ruteo / routing</text>
+  <text x="389" y="334" fill="#cbd5e1" font-size="11.5">Pad 1&#8211;4 &#8594; CC 35 (escena/scene)</text>
+  <text x="389" y="366" fill="#cbd5e1" font-size="11.5">Pad 5&#8211;16 &#8594; CC 18&#8211;29 (bypass toggle)</text>
+  <text x="389" y="398" fill="#cbd5e1" font-size="11.5">Lateral &#8594; CC 16&#8211;23 (sel. controller)</text>
+  <text x="389" y="430" fill="#cbd5e1" font-size="11.5">Knob &#8594; CC 16&#8211;23 (valor controller)</text>
+  <text x="389" y="470" fill="#64748b" font-size="11">+ LEDs radiobutton de vuelta al Maschine</text>
+
+  <!-- ===== Axe-Fx box ===== -->
+  <rect x="690" y="210" width="250" height="300" rx="12" fill="#132235" stroke="#34d399" stroke-width="1.4"/>
+  <text x="815" y="244" text-anchor="middle" fill="#e2e8f0" font-size="16" font-weight="700">Fractal Axe-Fx III</text>
+  <text x="815" y="264" text-anchor="middle" fill="#94a3b8" font-size="11">procesador / amp modeler</text>
+  <line x1="714" y1="280" x2="916" y2="280" stroke="#243b53" stroke-width="1"/>
+  <text x="714" y="316" fill="#cbd5e1" font-size="12.5">Escenas / Scenes 1&#8211;4</text>
+  <text x="714" y="356" fill="#cbd5e1" font-size="12.5">Effect bypass (12 bloques)</text>
+  <text x="714" y="396" fill="#cbd5e1" font-size="12.5">External Controllers 1&#8211;8</text>
+  <text x="714" y="440" fill="#64748b" font-size="11">responde a Control Change (CC)</text>
+
+  <!-- arrow Maschine -> Engine -->
+  <text x="327" y="284" text-anchor="middle" fill="#38bdf8" font-size="10.5">MIDI IN</text>
+  <text x="327" y="298" text-anchor="middle" fill="#64748b" font-size="9.5">note_on / CC</text>
+  <line x1="290" y1="320" x2="362" y2="320" stroke="#38bdf8" stroke-width="2.2" marker-end="url(#arrowBlue)"/>
+
+  <!-- arrow Engine -> Axe-Fx -->
+  <text x="652" y="284" text-anchor="middle" fill="#34d399" font-size="10.5">MIDI OUT</text>
+  <text x="652" y="298" text-anchor="middle" fill="#64748b" font-size="9.5">Control Change</text>
+  <line x1="615" y1="320" x2="687" y2="320" stroke="#34d399" stroke-width="2.2" marker-end="url(#arrowGreen)"/>
+
+  <!-- feedback arrow Engine -> Maschine (LEDs) -->
+  <line x1="362" y1="468" x2="293" y2="468" stroke="#f59e0b" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#arrowAmber)"/>
+  <text x="327" y="460" text-anchor="middle" fill="#f59e0b" font-size="9.5">LEDs &#8592; CC 112&#8211;119</text>
+
+  <!-- config.py -->
+  <rect x="365" y="540" width="250" height="48" rx="10" fill="#15233b" stroke="#475569" stroke-width="1.1"/>
+  <text x="490" y="569" text-anchor="middle" fill="#cbd5e1" font-size="12">config.py &#8212; mapeos pad / nota / CC</text>
+  <line x1="490" y1="540" x2="490" y2="512" stroke="#64748b" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#arrowGray)"/>
+
+  <!-- footer legend -->
+  <text x="40" y="628" fill="#475569" font-size="10.5">Azul: entrada MIDI del Maschine &#160;&#160; Verde: salida CC al Axe-Fx &#160;&#160; Ámbar: feedback de luces &#160;&#160; Gris punteado: control / configuración</text>
+</svg>

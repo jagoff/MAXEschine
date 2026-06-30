@@ -4,6 +4,21 @@
 
 MAXEschine is a macOS menu bar app that lets you fully control your Axe-Fx III using a Maschine Mikro as a MIDI controller.
 
+## 🧠 How it works
+
+<p align="center">
+  <img src="docs/architecture.svg" alt="MAXEschine signal flow: Maschine Mikro to Axe-Fx III" width="900">
+</p>
+
+The Maschine Mikro sends MIDI (pad notes and CCs) over USB. The engine `realtime_monitor_console.py` (built on `mido`) reads those messages and routes them:
+
+- **Pads 1-4 → CC 35** select Axe-Fx **scenes**.
+- **Pads 5-16 → CC 18-29** toggle **effect bypass** (12 blocks).
+- **Side buttons → CC 16-23** pick the active **External Controller** (radio-button behavior).
+- **Knob (CC 22) → CC 16-23** sends a value to the active External Controller.
+
+It then sends those Control Change messages to the **Axe-Fx III**, and lights the Maschine's side LEDs back as feedback (**CC 112-119**). `menubar_app_advanced.py` (rumps) detects the devices, launches the engine, and shows status in the menu bar; `config.py` holds all pad/note/CC mappings.
+
 ## ✨ Features
 
 - 🎛️ **Scene Control**: Pads 1-4 switch between Axe-Fx scenes
@@ -85,6 +100,21 @@ python3 realtime_monitor_console.py
 **Control completo de Maschine Mikro + Axe-Fx III**
 
 MAXEschine es una aplicación de menú de barra para macOS que permite controlar completamente tu Axe-Fx III usando un Maschine Mikro como controlador MIDI.
+
+## 🧠 Cómo funciona
+
+<p align="center">
+  <img src="docs/architecture.svg" alt="Flujo de señal de MAXEschine: Maschine Mikro hacia Axe-Fx III" width="900">
+</p>
+
+El Maschine Mikro envía MIDI (notas de pads y CCs) por USB. El motor `realtime_monitor_console.py` (basado en `mido`) lee esos mensajes y los rutea:
+
+- **Pads 1-4 → CC 35** seleccionan **escenas** del Axe-Fx.
+- **Pads 5-16 → CC 18-29** activan/desactivan el **bypass de efectos** (12 bloques).
+- **Botones laterales → CC 16-23** eligen el **External Controller** activo (comportamiento radiobutton).
+- **Potenciómetro (CC 22) → CC 16-23** envía un valor al External Controller activo.
+
+Luego envía esos mensajes Control Change al **Axe-Fx III**, y prende las luces laterales del Maschine como feedback (**CC 112-119**). `menubar_app_advanced.py` (rumps) detecta los dispositivos, lanza el motor y muestra el estado en la barra de menú; `config.py` contiene todos los mapeos pad/nota/CC.
 
 ## ✨ Características
 
